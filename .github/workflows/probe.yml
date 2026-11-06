@@ -10,5 +10,5 @@ jobs:
             "https://portal.api.gupy.io/api/v1/jobs?jobName=product%20designer&limit=5&offset=0" \
             "https://portal.api.gupy.io/api/job?name=product%20designer&limit=5&offset=0" \
             "https://employability-portal.gupy.io/api/job?name=product%20designer&limit=5&offset=0"; do
-            echo "=== $u"; curl -s -m 20 -w "\nHTTP %{http_code}\n" -H "accept: application/json" "$u" | head -c 1800; echo
+            echo "=== $u"; curl -s -m 20 -w "\nHTTP %{http_code}\n" -A "monitor-vagas/1.0 (uso pessoal)" "$u" | head -c 1800; echo
           done
