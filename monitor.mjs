@@ -1,5 +1,5 @@
 // Monitor de vagas -> Telegram
-// Lê as APIs públicas de vagas (Greenhouse, Lever, Ashby e os portais da Gupy e da Sólides),
+// Lê as APIs públicas de vagas (Greenhouse, Lever, Ashby, InHire e os portais da Gupy e da Sólides),
 // filtra por cargo/local e avisa no Telegram só o que for novo.
 // Node 20+ (usa fetch nativo). Sem dependências.
 
@@ -12,9 +12,9 @@ const { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, DRY_RUN } = process.env;
 const norm = (s) =>
   (s ?? "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-async function getJson(url) {
+async function getJson(url, headers = {}) {
   const res = await fetch(url, {
-    headers: { accept: "application/json" },
+    headers: { accept: "application/json", ...headers },
     signal: AbortSignal.timeout(20_000),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -58,6 +58,18 @@ const sources = {
       location: [j.location, j.isRemote ? "Remote" : ""].filter(Boolean).join(" · "),
       url: j.jobUrl,
       postedAt: j.publishedAt,
+    }));
+  },
+
+  // Página de carreiras no InHire (um endereço por empresa; a API não informa a data de publicação).
+  async inhire({ slug, name }) {
+    const data = await getJson("https://api.inhire.app/job-posts/public/pages", { "X-Tenant": slug });
+    return (data.jobsPage ?? []).map((j) => ({
+      id: `inhire:${slug}:${j.jobId}`,
+      title: j.displayName,
+      company: name ?? data.tenantName ?? slug,
+      location: [j.location, j.workplaceType].filter(Boolean).join(" · "),
+      url: `https://${slug}.inhire.app/vagas/${j.jobId}/${norm(j.displayName).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`,
     }));
   },
 
@@ -120,7 +132,7 @@ const esc = (s) => (s ?? "").toString().replace(/&/g, "&amp;").replace(/</g, "&l
 function formatJob(job) {
   const when = job.postedAt
     ? new Date(job.postedAt).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", ...(job.dateOnly ? {} : { timeStyle: "short" }) })
-    : "horário não informado";
+    : "data não informada pela fonte";
   return [
     `🆕 <b>${esc(job.title)}</b>`,
     `🏢 ${esc(job.company)}`,
@@ -189,22 +201,24 @@ async function main() {
 
   const fresh = [];
   const errors = [];
-  for (const t of tasks) {
-    try {
-      const jobs = await t.run();
+  // Consulta em grupos de 6 fontes por vez, com uma pausa curta entre os grupos.
+  for (let i = 0; i < tasks.length; i += 6) {
+    const group = tasks.slice(i, i + 6);
+    const results = await Promise.allSettled(group.map((t) => t.run()));
+    results.forEach((res, k) => {
+      const t = group[k];
+      if (res.status === "rejected") return errors.push(`${t.label}: ${res.reason?.message ?? res.reason}`);
       const isNewSource = !firstRun && !known.has(t.label);
-      for (const job of jobs) {
-        if (!job.url || seen[job.id]) continue;
+      for (const job of res.value) {
+        if (!job.url || !job.title || seen[job.id]) continue;
         if (!matches(job, cfg, t.brasil)) continue;
         seen[job.id] = new Date().toISOString();
         if (firstRun || isNewSource) seeded.push(job);
         else fresh.push(job);
       }
       known.add(t.label);
-    } catch (err) {
-      errors.push(`${t.label}: ${err.message}`);
-    }
-    await new Promise((r) => setTimeout(r, 400)); // gentileza com as APIs
+    });
+    await new Promise((r) => setTimeout(r, 300));
   }
 
   if (errors.length) console.warn(`Fontes com erro:\n- ${errors.join("\n- ")}`);

@@ -73,12 +73,6 @@
     },
     {
       "ats": "greenhouse",
-      "slug": "nubank",
-      "name": "Nubank",
-      "brasil": true
-    },
-    {
-      "ats": "greenhouse",
       "slug": "c6bank",
       "name": "C6 Bank",
       "brasil": true
@@ -148,6 +142,550 @@
       "slug": "tako",
       "name": "Tako",
       "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "180seguros",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "alelo",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "alice",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "avenue",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "azos",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "bancotoyota",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "caf",
+      "brasil": true,
+      "name": "CAF"
+    },
+    {
+      "ats": "inhire",
+      "slug": "cashme",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "celcoin",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "cobli",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "contaazul",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "contabilizei",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "cora",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "daki",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "dock",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "enjoei",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "foxbit",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "intera",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "involves",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "jeitto",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "kiwify",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "loggi",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "matera",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "mb",
+      "brasil": true,
+      "name": "Mercado Bitcoin"
+    },
+    {
+      "ats": "inhire",
+      "slug": "neoway",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "nibo",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "olist",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "paytrack",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "pier",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "qitech",
+      "brasil": true,
+      "name": "QI Tech"
+    },
+    {
+      "ats": "inhire",
+      "slug": "remessaonline",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "sicredi",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "sulamerica",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "transfero",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "unico",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "vr",
+      "brasil": true,
+      "name": "VR"
+    },
+    {
+      "ats": "inhire",
+      "slug": "warren",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "zig",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "alicerce",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "allugator",
+      "brasil": true,
+      "name": "allu"
+    },
+    {
+      "ats": "inhire",
+      "slug": "amigotech",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "qive",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "bemobi",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "cerc",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "cubos",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "housi",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "indicium",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "hubla",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "klavi",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "kanastra",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "juntossomosmais",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "magalu",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "mevo",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "mottu",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "neogrid",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "platformbuilders",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "principia",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "queroeducacao",
+      "brasil": true,
+      "name": "Qeevo (Quero Educação)"
+    },
+    {
+      "ats": "inhire",
+      "slug": "raiadrogasil",
+      "brasil": true,
+      "name": "RD Saúde"
+    },
+    {
+      "ats": "inhire",
+      "slug": "reclameaqui",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "semantix",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "skyone",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "solfacil",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "sallve",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "superlogica",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "telavita",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "ubots",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "vammo",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "vhsys",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "vortx",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "tarken",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "nstech",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "b3",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "cielo",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "monkey",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "southsystem",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "sysmap",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "objective",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "venturus",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "atlantico",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "mjv",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "tqi",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "zallpy",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "deal",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "radix",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "ecore",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "dtidigital",
+      "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "7comm",
+      "brasil": true,
+      "name": "7COMm"
+    },
+    {
+      "ats": "ashby",
+      "slug": "nubank",
+      "name": "Nubank",
+      "brasil": false
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "rdstation",
+      "name": "RD Station",
+      "brasil": true
+    },
+    {
+      "ats": "lever",
+      "slug": "flashapp",
+      "name": "Flash",
+      "brasil": true
+    },
+    {
+      "ats": "lever",
+      "slug": "starkbank",
+      "name": "Stark Bank",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "bancopan",
+      "name": "Banco PAN",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "agibank",
+      "name": "Agibank",
+      "brasil": true
+    },
+    {
+      "ats": "lever",
+      "slug": "bv",
+      "name": "Banco BV",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "agilize",
+      "name": "Agilize",
+      "brasil": true
+    },
+    {
+      "ats": "lever",
+      "slug": "zippi",
+      "name": "Zippi",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "ilia",
+      "name": "ília",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "clara",
+      "name": "Clara",
+      "brasil": false
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "gympass",
+      "name": "Wellhub (Gympass)",
+      "brasil": false
+    },
+    {
+      "ats": "ashby",
+      "slug": "belvo",
+      "name": "Belvo",
+      "brasil": false
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "incognia",
+      "name": "Incognia",
+      "brasil": false
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "getnet",
+      "name": "Getnet",
+      "brasil": false
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "sumup",
+      "name": "SumUp",
+      "brasil": false
     }
   ],
   "solidesTermos": [

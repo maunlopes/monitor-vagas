@@ -1,6 +1,6 @@
 # Monitor de vagas → Telegram
 
-Consulta a cada 10 minutos as APIs públicas de vagas (Greenhouse, Lever, Ashby e os portais da Gupy e da Sólides),
+Consulta a cada 10 minutos as APIs públicas de vagas (Greenhouse, Lever, Ashby, InHire e os portais da Gupy e da Sólides),
 filtra por cargo e local e avisa no Telegram só o que for novo. Roda no GitHub Actions, de graça.
 
 ## 1. Criar o bot do Telegram
@@ -28,7 +28,8 @@ Tudo fica em `config.json`:
 - `empresas`: páginas de carreira monitoradas diretamente
 
 Para incluir uma empresa, abra a página de vagas dela e veja o endereço:
-`job-boards.greenhouse.io/<slug>`, `jobs.lever.co/<slug>` ou `jobs.ashbyhq.com/<slug>`.
+`job-boards.greenhouse.io/<slug>`, `jobs.lever.co/<slug>`, `jobs.ashbyhq.com/<slug>` ou `<slug>.inhire.app`.
+Use `"brasil": false` para empresas que contratam em vários países: nesse caso só passam vagas que citem Brasil ou América Latina.
 
 ## Testar no computador (opcional)
 Com Node 20+: `DRY_RUN=1 node monitor.mjs` mostra no terminal o que seria enviado, sem enviar.
