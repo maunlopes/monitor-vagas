@@ -141,6 +141,28 @@ async function sendTelegram(text) {
   if (!res.ok) throw new Error(`Telegram: HTTP ${res.status} ${await res.text()}`);
 }
 
+// Envia uma lista de vagas em uma ou mais mensagens (limite do Telegram: 4096 caracteres).
+async function sendList(head, jobs) {
+  const day = (j) => (j.postedAt ? new Date(j.postedAt).getTime() : 0);
+  const lines = [...jobs]
+    .sort((a, b) => day(b) - day(a))
+    .map((j) => {
+      const d = j.postedAt
+        ? new Date(j.postedAt).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit" })
+        : "s/ data";
+      return `• ${d} · <a href="${esc(j.url)}">${esc(j.title.trim())}</a> · ${esc(j.company)}`;
+    });
+  let chunk = head;
+  for (const line of lines) {
+    if (chunk.length + line.length + 1 > 3500) {
+      await sendTelegram(chunk);
+      chunk = "(continuação)";
+    }
+    chunk += `\n${line}`;
+  }
+  await sendTelegram(chunk);
+}
+
 // ---------- Execução ----------
 
 async function main() {
@@ -153,7 +175,7 @@ async function main() {
   }
   const firstRun = seen === null;
   seen ??= {};
-  let seeded = 0;
+  const seeded = []; // vagas já abertas em fontes novas: vão juntas em uma lista, sem aviso individual
 
   const tasks = [
     ...cfg.empresas.map((b) => ({ label: `${b.ats}:${b.slug}`, brasil: !!b.brasil, run: () => sources[b.ats](b) })),
@@ -175,7 +197,7 @@ async function main() {
         if (!job.url || seen[job.id]) continue;
         if (!matches(job, cfg, t.brasil)) continue;
         seen[job.id] = new Date().toISOString();
-        if (isNewSource) seeded++;
+        if (firstRun || isNewSource) seeded.push(job);
         else fresh.push(job);
       }
       known.add(t.label);
@@ -187,15 +209,14 @@ async function main() {
 
   if (errors.length) console.warn(`Fontes com erro:\n- ${errors.join("\n- ")}`);
 
-  if (firstRun) {
-    // Não inunda o Telegram com tudo que já estava aberto.
-    await sendTelegram(
-      `✅ Monitor de vagas ativo. ${fresh.length} vaga(s) já abertas foram registradas; a partir de agora aviso só as novas.` +
-        (errors.length ? `\n⚠️ ${errors.length} fonte(s) com erro, confira o log.` : "")
-    );
-  } else {
-    for (const job of fresh) await sendTelegram(formatJob(job));
-    if (seeded) await sendTelegram(`➕ Fonte nova no monitor: ${seeded} vaga(s) já abertas foram registradas sem aviso.`);
+  for (const job of fresh) await sendTelegram(formatJob(job));
+
+  if (firstRun || seeded.length) {
+    const head = firstRun
+      ? `✅ Monitor de vagas ativo. ${seeded.length} vaga(s) já abertas batem com o filtro:`
+      : `➕ Fonte nova no monitor. ${seeded.length} vaga(s) já abertas batem com o filtro:`;
+    await sendList(head, seeded);
+    if (firstRun) await sendTelegram("A partir de agora, cada vaga nova chega em uma mensagem separada.");
   }
 
   // Limpa registros com mais de 90 dias para o arquivo não crescer sem limite.
@@ -204,7 +225,7 @@ async function main() {
   seen._fontes = [...known].sort();
 
   if (!DRY_RUN) await writeFile(STATE_FILE, JSON.stringify(seen, null, 2) + "\n");
-  console.log(`${fresh.length} vaga(s) nova(s), ${errors.length} fonte(s) com erro.`);
+  console.log(`${fresh.length} vaga(s) nova(s), ${seeded.length} já aberta(s) listada(s), ${errors.length} fonte(s) com erro.`);
 }
 
 main().catch((err) => {
