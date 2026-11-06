@@ -1,5 +1,5 @@
 // Monitor de vagas -> Telegram
-// Lê as APIs públicas de vagas (Greenhouse, Lever, Ashby e portal da Gupy),
+// Lê as APIs públicas de vagas (Greenhouse, Lever, Ashby e os portais da Gupy e da Sólides),
 // filtra por cargo/local e avisa no Telegram só o que for novo.
 // Node 20+ (usa fetch nativo). Sem dependências.
 
@@ -77,6 +77,22 @@ const sources = {
       brasil: true,
     }));
   },
+
+  // Busca por palavra-chave no portal Sólides Vagas (resultados do mais recente para o mais antigo).
+  async solides({ term }) {
+    const url = `https://vagas.solides.com.br/api/vacancies?page=1&take=14&title=${encodeURIComponent(term)}&locations=`;
+    const data = await getJson(url);
+    return (data.data ?? []).map((j) => ({
+      id: `solides:${j.id}`,
+      title: j.title,
+      company: j.companyName ?? j.slug ?? "Sólides",
+      location: [j.city?.name, j.state?.name, j.jobType, j.homeOffice ? "remoto" : ""].filter(Boolean).join(" · "),
+      url: j.slug ? `https://${j.slug}.vagas.solides.com.br/vaga/${j.id}` : "https://vagas.solides.com.br/",
+      postedAt: j.createdAt ? `${j.createdAt}T12:00:00-03:00` : undefined,
+      dateOnly: true,
+      brasil: true,
+    }));
+  },
 };
 
 // ---------- Filtro ----------
@@ -103,7 +119,7 @@ const esc = (s) => (s ?? "").toString().replace(/&/g, "&amp;").replace(/</g, "&l
 
 function formatJob(job) {
   const when = job.postedAt
-    ? new Date(job.postedAt).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", timeStyle: "short" })
+    ? new Date(job.postedAt).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", ...(job.dateOnly ? {} : { timeStyle: "short" }) })
     : "horário não informado";
   return [
     `🆕 <b>${esc(job.title)}</b>`,
@@ -142,6 +158,7 @@ async function main() {
   const tasks = [
     ...cfg.empresas.map((b) => ({ label: `${b.ats}:${b.slug}`, brasil: !!b.brasil, run: () => sources[b.ats](b) })),
     ...cfg.gupyTermos.map((term) => ({ label: `gupy:"${term}"`, brasil: true, run: () => sources.gupy({ term }) })),
+    ...(cfg.solidesTermos ?? []).map((term) => ({ label: `solides:"${term}"`, brasil: true, run: () => sources.solides({ term }) })),
   ];
 
   // Fontes já consultadas com sucesso. Fonte nova entra em silêncio na primeira vez,

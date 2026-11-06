@@ -1,6 +1,6 @@
 # Monitor de vagas → Telegram
 
-Consulta a cada 10 minutos as APIs públicas de vagas (Greenhouse, Lever, Ashby e o portal da Gupy),
+Consulta a cada 10 minutos as APIs públicas de vagas (Greenhouse, Lever, Ashby e os portais da Gupy e da Sólides),
 filtra por cargo e local e avisa no Telegram só o que for novo. Roda no GitHub Actions, de graça.
 
 ## 1. Criar o bot do Telegram
@@ -24,6 +24,7 @@ Tudo fica em `config.json`:
 - `excluir`: termos que descartam a vaga
 - `locaisBrasil`: locais aceitos (remoto e Brasília)
 - `gupyTermos`: buscas feitas no portal da Gupy
+- `solidesTermos`: buscas feitas no portal Sólides Vagas
 - `empresas`: páginas de carreira monitoradas diretamente
 
 Para incluir uma empresa, abra a página de vagas dela e veja o endereço:
