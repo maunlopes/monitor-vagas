@@ -39,7 +39,13 @@
     "south america",
     "americas"
   ],
-  "gupyTermos": [],
+  "gupyTermos": [
+    "product designer",
+    "ux designer",
+    "ui/ux",
+    "ux researcher",
+    "designer de produto"
+  ],
   "empresas": [
     {
       "ats": "lever",

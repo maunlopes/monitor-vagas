@@ -63,12 +63,12 @@ const sources = {
 
   // Busca por palavra-chave no portal público da Gupy (cobre todas as empresas que usam Gupy).
   async gupy({ term }) {
-    const url = `https://portal.api.gupy.io/api/v1/jobs?jobName=${encodeURIComponent(term)}&limit=50&offset=0`;
+    const url = `https://portal.gupy.io/api/job-search/jobs?jobName=${encodeURIComponent(term)}&limit=50&offset=0&sortBy=publishedDate&sortOrder=desc`;
     const data = await getJson(url);
     return (data.data ?? []).map((j) => ({
       id: `gupy:${j.id}`,
       title: j.name,
-      company: j.careerPageName ?? "Gupy",
+      company: (j.jobUrl ?? "").match(/\/\/([^.]+)\.gupy\.io/)?.[1] ?? j.careerPageName ?? "Gupy",
       location: [j.city, j.state, j.workplaceType, j.isRemoteWork ? "remoto" : ""]
         .filter(Boolean)
         .join(" · "),
@@ -137,23 +137,31 @@ async function main() {
   }
   const firstRun = seen === null;
   seen ??= {};
+  let seeded = 0;
 
   const tasks = [
     ...cfg.empresas.map((b) => ({ label: `${b.ats}:${b.slug}`, brasil: !!b.brasil, run: () => sources[b.ats](b) })),
     ...cfg.gupyTermos.map((term) => ({ label: `gupy:"${term}"`, brasil: true, run: () => sources.gupy({ term }) })),
   ];
 
+  // Fontes já consultadas com sucesso. Fonte nova entra em silêncio na primeira vez,
+  // para não despejar no Telegram tudo o que já estava aberto.
+  const known = new Set(seen._fontes ?? (firstRun ? [] : cfg.empresas.map((b) => `${b.ats}:${b.slug}`)));
+
   const fresh = [];
   const errors = [];
   for (const t of tasks) {
     try {
       const jobs = await t.run();
+      const isNewSource = !firstRun && !known.has(t.label);
       for (const job of jobs) {
         if (!job.url || seen[job.id]) continue;
         if (!matches(job, cfg, t.brasil)) continue;
         seen[job.id] = new Date().toISOString();
-        fresh.push(job);
+        if (isNewSource) seeded++;
+        else fresh.push(job);
       }
+      known.add(t.label);
     } catch (err) {
       errors.push(`${t.label}: ${err.message}`);
     }
@@ -170,11 +178,13 @@ async function main() {
     );
   } else {
     for (const job of fresh) await sendTelegram(formatJob(job));
+    if (seeded) await sendTelegram(`➕ Fonte nova no monitor: ${seeded} vaga(s) já abertas foram registradas sem aviso.`);
   }
 
   // Limpa registros com mais de 90 dias para o arquivo não crescer sem limite.
   const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
-  for (const [id, ts] of Object.entries(seen)) if (new Date(ts).getTime() < cutoff) delete seen[id];
+  for (const [id, ts] of Object.entries(seen)) if (id !== "_fontes" && new Date(ts).getTime() < cutoff) delete seen[id];
+  seen._fontes = [...known].sort();
 
   if (!DRY_RUN) await writeFile(STATE_FILE, JSON.stringify(seen, null, 2) + "\n");
   console.log(`${fresh.length} vaga(s) nova(s), ${errors.length} fonte(s) com erro.`);
