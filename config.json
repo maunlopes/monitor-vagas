@@ -1,0 +1,153 @@
+{
+  "titulos": [
+    "product designer",
+    "ux designer",
+    "ui designer",
+    "ux/ui",
+    "ui/ux",
+    "ux ui",
+    "ui ux",
+    "designer de produto",
+    "designer de interacao",
+    "designer de experiencia",
+    "ux researcher",
+    "ux research",
+    "pesquisador de ux",
+    "design system"
+  ],
+  "excluir": [
+    "estagi",
+    "intern",
+    "junior",
+    "jr",
+    "trainee",
+    "aprendiz"
+  ],
+  "empresasExcluidas": [],
+  "locaisBrasil": [
+    "remot",
+    "home office",
+    "anywhere",
+    "brasilia",
+    "distrito federal"
+  ],
+  "locaisGlobais": [
+    "brasil",
+    "brazil",
+    "latam",
+    "latin america",
+    "south america",
+    "americas"
+  ],
+  "gupyTermos": [
+    "product designer",
+    "ux designer",
+    "ui/ux",
+    "ux researcher",
+    "designer de produto"
+  ],
+  "empresas": [
+    {
+      "ats": "lever",
+      "slug": "ciandt",
+      "name": "CI&T",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "ifoodcarreiras",
+      "name": "iFood",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "xpinc",
+      "name": "XP Inc.",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "hotmartcareersbr",
+      "name": "Hotmart",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "nubank",
+      "name": "Nubank",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "c6bank",
+      "name": "C6 Bank",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "inter",
+      "name": "Inter",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "stone",
+      "name": "Stone",
+      "brasil": true
+    },
+    {
+      "ats": "lever",
+      "slug": "neon",
+      "name": "Neon",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "quintoandar",
+      "name": "QuintoAndar",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "btgpactual",
+      "name": "BTG Pactual",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "ebanx",
+      "name": "EBANX",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "zupinnovation",
+      "name": "Zup Innovation",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "jusbrasil",
+      "name": "Jusbrasil",
+      "brasil": true
+    },
+    {
+      "ats": "greenhouse",
+      "slug": "vtex",
+      "name": "VTEX",
+      "brasil": false
+    },
+    {
+      "ats": "lever",
+      "slug": "swile",
+      "name": "Swile",
+      "brasil": false
+    },
+    {
+      "ats": "ashby",
+      "slug": "tako",
+      "name": "Tako",
+      "brasil": true
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+name: Monitor de vagas
+
+on:
+  schedule:
+    - cron: "*/10 * * * *" # a cada 10 min (o GitHub pode atrasar alguns minutos)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: monitor-vagas
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node monitor.mjs
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      - name: Salvar vagas já vistas
+        run: |
+          git config user.name "monitor-vagas"
+          git config user.email "monitor-vagas@users.noreply.github.com"
+          git add seen.json
+          git diff --cached --quiet || (git commit -m "atualiza vagas vistas" && git push)
