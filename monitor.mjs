@@ -73,6 +73,18 @@ const sources = {
     }));
   },
 
+  // Página de vagas da ilegra (sistema próprio, "Recru"; não informa a data de publicação).
+  async ilegra() {
+    const data = await getJson("https://recru-backend.hub.ilegra.com/vacancies?page=0&size=100");
+    return (data.content ?? []).map((j) => ({
+      id: `ilegra:${j.id}`,
+      title: j.title,
+      company: "ilegra",
+      location: (j.tags ?? []).map((t) => t.name).filter((n) => n && !/PCD|Efetivo/i.test(n)).join(" · "),
+      url: `https://vagas.ilegra.com/vacancy/${j.id}`,
+    }));
+  },
+
   // Busca por palavra-chave no portal público da Gupy (cobre todas as empresas que usam Gupy).
   async gupy({ term }) {
     const url = `https://portal.gupy.io/api/job-search/jobs?jobName=${encodeURIComponent(term)}&limit=50&offset=0&sortBy=publishedDate&sortOrder=desc`;

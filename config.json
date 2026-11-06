@@ -686,6 +686,12 @@
       "slug": "sumup",
       "name": "SumUp",
       "brasil": false
+    },
+    {
+      "ats": "ilegra",
+      "slug": "ilegra",
+      "name": "ilegra",
+      "brasil": true
     }
   ],
   "solidesTermos": [
