@@ -85,6 +85,27 @@ const sources = {
     }));
   },
 
+  // Página de vagas da Arbitralis (site próprio, sem API; lê o HTML e extrai os links).
+  async arbivagas() {
+    const res = await fetch("https://arbivagas.win/vagas", { headers: { accept: "text/html" }, signal: AbortSignal.timeout(20_000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const html = await res.text();
+    // Links no formato /vagas/<slug>
+    const seen = new Set();
+    return [...html.matchAll(/href="\/vagas\/([^"]+)"/g)]
+      .filter(([, slug]) => !seen.has(slug) && seen.add(slug))
+      .map(([, slug]) => {
+        const title = slug.replace(/-/g, " ").replace(/\w/g, (c) => c.toUpperCase());
+        return {
+          id: `arbivagas:${slug}`,
+          title,
+          company: "Arbitralis",
+          location: "",
+          url: `https://arbivagas.win/vagas/${slug}`,
+        };
+      });
+  },
+
   // Busca por palavra-chave no portal público da Gupy (cobre todas as empresas que usam Gupy).
   async gupy({ term }) {
     const url = `https://portal.gupy.io/api/job-search/jobs?jobName=${encodeURIComponent(term)}&limit=50&offset=0&sortBy=publishedDate&sortOrder=desc`;
@@ -205,6 +226,7 @@ async function main() {
     ...cfg.empresas.map((b) => ({ label: `${b.ats}:${b.slug}`, brasil: !!b.brasil, run: () => sources[b.ats](b) })),
     ...cfg.gupyTermos.map((term) => ({ label: `gupy:"${term}"`, brasil: true, run: () => sources.gupy({ term }) })),
     ...(cfg.solidesTermos ?? []).map((term) => ({ label: `solides:"${term}"`, brasil: true, run: () => sources.solides({ term }) })),
+    ...(cfg.arbivagas ? [{ label: "arbivagas", brasil: true, run: () => sources.arbivagas() }] : []),
   ];
 
   // Fontes já consultadas com sucesso. Fonte nova entra em silêncio na primeira vez,
