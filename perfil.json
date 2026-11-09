@@ -1,0 +1,53 @@
+{
+  "nome": "Maurício Nunes Lopes",
+  "cargo": "Product Designer Sênior",
+  "anos": 15,
+  "senioridade": ["sênior", "senior", "especialista", "staff", "lead"],
+  "contrato": ["pj", "clt"],
+  "localidade": ["remoto", "brasília", "brasil"],
+  "idiomas": {
+    "portugues": "nativo",
+    "ingles": "técnico (leitura)"
+  },
+  "skills_core": [
+    "figma", "design system", "design systems", "tokens",
+    "ux research", "pesquisa com usuários", "teste de usabilidade", "testes de usabilidade",
+    "entrevistas", "discovery",
+    "ui design", "interface", "alta fidelidade", "prototipação", "protótipos",
+    "componentes", "variáveis", "auto layout",
+    "acessibilidade", "wcag",
+    "ux writing",
+    "arquitetura da informação"
+  ],
+  "skills_diferencial": [
+    "front-end", "html", "css", "javascript", "react", "next.js", "nextjs",
+    "design sprint",
+    "service blueprint",
+    "ia generativa", "inteligência artificial", "ai",
+    "google analytics", "hotjar", "clarity", "data studio",
+    "testes a/b"
+  ],
+  "setores": [
+    "fintech", "financeiro", "banco", "bancário", "banking",
+    "seguros", "insurance",
+    "governo", "público", "government",
+    "saúde", "health",
+    "benefícios", "benefits",
+    "esg", "carbono"
+  ],
+  "ferramentas": [
+    "figma", "adobe xd", "sketch",
+    "jira", "confluence", "notion", "miro", "figjam",
+    "git", "github"
+  ],
+  "clientes_notaveis": [
+    "banco do brasil", "bb", "tcu", "aneel", "banco next", "next",
+    "bradesco", "btg", "ambipar", "caixa"
+  ],
+  "pontos_fracos": [
+    { "tema": "inglês", "palavras": ["inglês avançado", "inglês fluente", "fluent english", "advanced english", "english required", "inglês obrigatório"], "nota": "Inglês básico/técnico — pode ser desclassificatório se a vaga exige fluente" },
+    { "tema": "gestão de pessoas", "palavras": ["gestão de equipe", "people management", "liderança de time", "coordenação de designers", "manage a team"], "nota": "Sem experiência formal em gestão de pessoas" },
+    { "tema": "métricas de negócio", "palavras": ["kpi", "okr", "roi", "north star metric", "receita", "revenue"], "nota": "CV não tem métricas de impacto de negócio — prepare exemplos para a entrevista" },
+    { "tema": "produto específico", "palavras": ["mobile nativo", "ios", "android", "swift", "kotlin"], "nota": "Experiência focada em web; mobile limitado a responsive e apps híbridos" }
+  ]
+}

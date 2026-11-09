@@ -4,6 +4,7 @@
 // Node 20+ (usa fetch nativo). Sem dependências.
 
 import { readFile, writeFile } from "node:fs/promises";
+import { avaliar } from "./avaliar-cv.mjs";
 
 const CONFIG_FILE = new URL("./config.json", import.meta.url);
 const STATE_FILE = new URL("./seen.json", import.meta.url);
@@ -158,21 +159,82 @@ function matches(job, cfg, boardIsBrazilian) {
   return cfg.locaisGlobais.some((l) => loc.includes(norm(l)));
 }
 
+// ---------- Buscar descrição completa da vaga ----------
+
+async function fetchDescricao(job) {
+  try {
+    const [source] = job.id.split(":");
+    // Greenhouse: API retorna HTML da descrição
+    if (source === "greenhouse") {
+      const parts = job.id.split(":");
+      const data = await getJson(`https://boards-api.greenhouse.io/v1/boards/${parts[1]}/jobs/${parts[2]}`);
+      return stripHtml(data.content ?? "") + " " + (data.departments?.map(d => d.name).join(" ") ?? "");
+    }
+    // Lever: API retorna listas de texto
+    if (source === "lever") {
+      const parts = job.id.split(":");
+      const data = await getJson(`https://api.lever.co/v0/postings/${parts[1]}/${parts[2]}`);
+      return (data.descriptionPlain ?? "") + " " + (data.lists ?? []).map(l => l.text + " " + l.content).join(" ");
+    }
+    // Ashby
+    if (source === "ashby") {
+      const parts = job.id.split(":");
+      const data = await getJson(`https://api.ashbyhq.com/posting-api/job-board/${parts[1]}`);
+      const j = (data.jobs ?? []).find(j => j.id === parts[2]);
+      return stripHtml(j?.descriptionHtml ?? j?.descriptionPlain ?? "");
+    }
+    // Gupy: busca individual — a URL contém o job encoded
+    if (source === "gupy" && job.url) {
+      const res = await fetch(job.url, { headers: { accept: "text/html" }, signal: AbortSignal.timeout(15_000) });
+      if (res.ok) {
+        const html = await res.text();
+        return stripHtml(html).slice(0, 8000);
+      }
+    }
+    // Sólides
+    if (source === "solides") {
+      const parts = job.id.split(":");
+      const data = await getJson(`https://vagas.solides.com.br/api/vacancies/${parts[1]}`);
+      return stripHtml(data.description ?? "") + " " + (data.requirements ?? "");
+    }
+  } catch (e) {
+    console.warn(`Não consegui buscar descrição de ${job.id}: ${e.message}`);
+  }
+  // Fallback: usa título + location
+  return `${job.title} ${job.company} ${job.location}`;
+}
+
+function stripHtml(html) {
+  return html.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\s+/g, " ").trim();
+}
+
 // ---------- Telegram ----------
 
 const esc = (s) => (s ?? "").toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-function formatJob(job) {
+async function formatJob(job) {
   const when = job.postedAt
     ? new Date(job.postedAt).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", ...(job.dateOnly ? {} : { timeStyle: "short" }) })
     : "data não informada pela fonte";
+
+  // Busca descrição e avalia aderência
+  let aderencia = "";
+  try {
+    const desc = await fetchDescricao(job);
+    const r = await avaliar(desc, job.title, job.company);
+    aderencia = "\n" + r.resumo;
+  } catch (e) {
+    console.warn(`Avaliação falhou para ${job.title}: ${e.message}`);
+  }
+
   return [
     `🆕 <b>${esc(job.title)}</b>`,
     `🏢 ${esc(job.company)}`,
     `📍 ${esc(job.location || "local não informado")}`,
     `🕒 Publicada: ${when}`,
     `<a href="${esc(job.url)}">Abrir vaga</a>`,
-  ].join("\n");
+    aderencia,
+  ].filter(Boolean).join("\n");
 }
 
 async function sendTelegram(text) {
@@ -257,7 +319,7 @@ async function main() {
 
   if (errors.length) console.warn(`Fontes com erro:\n- ${errors.join("\n- ")}`);
 
-  for (const job of fresh) await sendTelegram(formatJob(job));
+  for (const job of fresh) await sendTelegram(await formatJob(job));
 
   if (firstRun || seeded.length) {
     const head = firstRun
