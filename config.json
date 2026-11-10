@@ -692,6 +692,12 @@
       "slug": "ilegra",
       "name": "ilegra",
       "brasil": true
+    },
+    {
+      "ats": "inhire",
+      "slug": "lwsa",
+      "name": "LWSA (Locaweb)",
+      "brasil": true
     }
   ],
   "solidesTermos": [
