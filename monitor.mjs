@@ -62,6 +62,26 @@ const sources = {
     }));
   },
 
+  // Página de carreiras no Workable (API v3, um endereço por empresa).
+  async workable({ slug, name }) {
+    const res = await fetch(`https://apply.workable.com/api/v3/accounts/${slug}/jobs`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "{}",
+      signal: AbortSignal.timeout(20_000),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return (data.results ?? []).map((j) => ({
+      id: `workable:${slug}:${j.shortcode}`,
+      title: j.title,
+      company: name ?? slug,
+      location: [j.location?.city, j.location?.country, j.workplace].filter(Boolean).join(", "),
+      url: `https://apply.workable.com/${slug}/j/${j.shortcode}/`,
+      postedAt: j.published,
+    }));
+  },
+
   // Página de carreiras no InHire (um endereço por empresa; a API não informa a data de publicação).
   async inhire({ slug, name }) {
     const data = await getJson("https://api.inhire.app/job-posts/public/pages", { "X-Tenant": slug });
