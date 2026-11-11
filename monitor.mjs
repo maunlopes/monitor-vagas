@@ -192,6 +192,12 @@ function matches(job, cfg, boardIsBrazilian) {
   if (cfg.excluir.some((t) => title.includes(norm(t)))) return false;
   if (cfg.empresasExcluidas.some((e) => norm(job.company).includes(norm(e)))) return false;
 
+  // Descarta vagas publicadas há mais de 90 dias.
+  if (job.postedAt) {
+    const age = Date.now() - new Date(job.postedAt).getTime();
+    if (age > 90 * 24 * 60 * 60 * 1000) return false;
+  }
+
   const loc = norm(job.location);
   if (boardIsBrazilian || job.brasil) {
     // Empresa brasileira: aceita remoto, Brasília ou local não informado.
