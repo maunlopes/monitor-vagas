@@ -275,9 +275,9 @@ async function formatJob(job) {
     `🏢 ${esc(job.company)}`,
     `📍 ${esc(job.location || "local não informado")}`,
     `🕒 Publicada: ${when}`,
-    `<a href="${esc(job.url)}">Abrir vaga</a>`,
+    `🔗 ${esc(job.url)}`,
     aderencia,
-  ].filter(Boolean).join("\n");
+  ].filter(Boolean).join("\n").slice(0, 4090);
 }
 
 async function sendTelegram(text) {
