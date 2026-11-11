@@ -390,11 +390,6 @@
     },
     {
       "ats": "inhire",
-      "slug": "klavi",
-      "brasil": true
-    },
-    {
-      "ats": "inhire",
       "slug": "kanastra",
       "brasil": true
     },
@@ -432,12 +427,6 @@
       "ats": "inhire",
       "slug": "principia",
       "brasil": true
-    },
-    {
-      "ats": "inhire",
-      "slug": "queroeducacao",
-      "brasil": true,
-      "name": "Qeevo (Quero Educação)"
     },
     {
       "ats": "inhire",

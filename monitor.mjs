@@ -150,17 +150,20 @@ const sources = {
     const html = await res.text();
     const jobs = [];
     const seen = new Set();
-    // Cada card de vaga tem um link /<slug>/<id>/
-    for (const m of html.matchAll(/href="\/([\w-]+)\/(\d+)\/?"/g)) {
-      const [, , id] = m;
+    const base = `oportunidades.mindsight.com.br/${slug}/`;
+    // Links absolutos no formato https://oportunidades.mindsight.com.br/<slug>/<id>/
+    for (const m of html.matchAll(new RegExp(`https?://${base.replace(/\//g, "\\/")}(\\d+)\\/?`, "g"))) {
+      const id = m[1];
       if (seen.has(id)) continue;
       seen.add(id);
-      // Tenta extrair o título do texto próximo ao link (tag <a> com o título)
-      const titleMatch = html.match(new RegExp(`href="/${slug}/${id}/?"[^>]*>([^<]+)<`));
-      const title = titleMatch ? titleMatch[1].trim() : `Vaga ${id}`;
-      // Tenta extrair localidade (geralmente em um span/p perto do card)
-      const locBlock = html.slice(Math.max(0, html.indexOf(`/${slug}/${id}`) - 600), html.indexOf(`/${slug}/${id}`) + 200);
-      const locMatch = locBlock.match(/(?:São Paulo|Rio de Janeiro|Belo Horizonte|Curitiba|Brasília|Remoto|Remote|Brasil)[^<]*/i);
+      // Título: texto que aparece antes do link "Ver detalhes" (geralmente em heading ou parágrafo).
+      // Procura o bloco de ~800 chars antes da URL para extrair o título e o local.
+      const pos = html.indexOf(`${base}${id}`);
+      const block = pos > 0 ? html.slice(Math.max(0, pos - 800), pos) : "";
+      // Último heading ou texto em negrito antes do link costuma ser o título.
+      const titles = [...block.matchAll(/<(?:h[1-6]|strong|b)[^>]*>([^<]{4,120})<\//gi)];
+      const title = titles.length ? titles[titles.length - 1][1].trim() : `Vaga ${id}`;
+      const locMatch = block.match(/(?:São Paulo|Rio de Janeiro|Belo Horizonte|Curitiba|Brasília|Distrito Federal|Remoto|Remote|Brasil)[^<]*/i);
       jobs.push({
         id: `mindsight:${slug}:${id}`,
         title,
