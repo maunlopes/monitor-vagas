@@ -140,7 +140,7 @@ const sources = {
     }));
   },
 
-  // Página de vagas no Mindsight (um endereço por empresa; lê o HTML e extrai título, local e link).
+  // Página de vagas no Mindsight (um endereço por empresa; extrai o JSON embutido no __NEXT_DATA__).
   async mindsight({ slug, name }) {
     const res = await fetch(`https://oportunidades.mindsight.com.br/${slug}?page=1&pageSize=100`, {
       headers: { accept: "text/html" },
@@ -148,32 +148,19 @@ const sources = {
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const html = await res.text();
-    const jobs = [];
-    const seen = new Set();
-    const base = `oportunidades.mindsight.com.br/${slug}/`;
-    // Links absolutos no formato https://oportunidades.mindsight.com.br/<slug>/<id>/
-    for (const m of html.matchAll(new RegExp(`https?://${base.replace(/\//g, "\\/")}(\\d+)\\/?`, "g"))) {
-      const id = m[1];
-      if (seen.has(id)) continue;
-      seen.add(id);
-      // Título: texto que aparece antes do link "Ver detalhes" (geralmente em heading ou parágrafo).
-      // Procura o bloco de ~800 chars antes da URL para extrair o título e o local.
-      const pos = html.indexOf(`${base}${id}`);
-      const block = pos > 0 ? html.slice(Math.max(0, pos - 800), pos) : "";
-      // Último heading ou texto em negrito antes do link costuma ser o título.
-      const titles = [...block.matchAll(/<(?:h[1-6]|strong|b)[^>]*>([^<]{4,120})<\//gi)];
-      const title = titles.length ? titles[titles.length - 1][1].trim() : `Vaga ${id}`;
-      const locMatch = block.match(/(?:São Paulo|Rio de Janeiro|Belo Horizonte|Curitiba|Brasília|Distrito Federal|Remoto|Remote|Brasil)[^<]*/i);
-      jobs.push({
-        id: `mindsight:${slug}:${id}`,
-        title,
-        company: name ?? slug,
-        location: locMatch ? locMatch[0].trim() : "",
-        url: `https://oportunidades.mindsight.com.br/${slug}/${id}`,
-        brasil: true,
-      });
-    }
-    return jobs;
+    const m = html.match(/<script\s+id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/);
+    if (!m) return [];
+    const data = JSON.parse(m[1]);
+    const postings = data?.props?.pageProps?.publicJobPostings ?? [];
+    return postings.map((j) => ({
+      id: `mindsight:${slug}:${j.id}`,
+      title: j.name,
+      company: name ?? slug,
+      location: [j.city, j.state, j.work_model === "REMOTE" ? "Remoto" : j.work_model].filter(Boolean).join(", "),
+      url: `https://oportunidades.mindsight.com.br/${slug}/${j.id}`,
+      postedAt: j.external_publication_start_at || j.created_at,
+      brasil: true,
+    }));
   },
 };
 
