@@ -139,6 +139,39 @@ const sources = {
       brasil: true,
     }));
   },
+
+  // Página de vagas no Mindsight (um endereço por empresa; lê o HTML e extrai título, local e link).
+  async mindsight({ slug, name }) {
+    const res = await fetch(`https://oportunidades.mindsight.com.br/${slug}?page=1&pageSize=100`, {
+      headers: { accept: "text/html" },
+      signal: AbortSignal.timeout(20_000),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const html = await res.text();
+    const jobs = [];
+    const seen = new Set();
+    // Cada card de vaga tem um link /<slug>/<id>/
+    for (const m of html.matchAll(/href="\/([\w-]+)\/(\d+)\/?"/g)) {
+      const [, , id] = m;
+      if (seen.has(id)) continue;
+      seen.add(id);
+      // Tenta extrair o título do texto próximo ao link (tag <a> com o título)
+      const titleMatch = html.match(new RegExp(`href="/${slug}/${id}/?"[^>]*>([^<]+)<`));
+      const title = titleMatch ? titleMatch[1].trim() : `Vaga ${id}`;
+      // Tenta extrair localidade (geralmente em um span/p perto do card)
+      const locBlock = html.slice(Math.max(0, html.indexOf(`/${slug}/${id}`) - 600), html.indexOf(`/${slug}/${id}`) + 200);
+      const locMatch = locBlock.match(/(?:São Paulo|Rio de Janeiro|Belo Horizonte|Curitiba|Brasília|Remoto|Remote|Brasil)[^<]*/i);
+      jobs.push({
+        id: `mindsight:${slug}:${id}`,
+        title,
+        company: name ?? slug,
+        location: locMatch ? locMatch[0].trim() : "",
+        url: `https://oportunidades.mindsight.com.br/${slug}/${id}`,
+        brasil: true,
+      });
+    }
+    return jobs;
+  },
 };
 
 // ---------- Filtro ----------
@@ -289,6 +322,7 @@ async function main() {
     ...cfg.gupyTermos.map((term) => ({ label: `gupy:"${term}"`, brasil: true, run: () => sources.gupy({ term }) })),
     ...(cfg.solidesTermos ?? []).map((term) => ({ label: `solides:"${term}"`, brasil: true, run: () => sources.solides({ term }) })),
     ...(cfg.arbivagas ? [{ label: "arbivagas", brasil: true, run: () => sources.arbivagas() }] : []),
+    ...(cfg.mindsight ?? []).map((b) => ({ label: `mindsight:${b.slug}`, brasil: true, run: () => sources.mindsight(b) })),
   ];
 
   // Fontes já consultadas com sucesso. Fonte nova entra em silêncio na primeira vez,

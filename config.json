@@ -706,5 +706,11 @@
     "designer de produto",
     "ux researcher"
   ],
-  "arbivagas": true
+  "arbivagas": true,
+  "mindsight": [
+    {
+      "slug": "opea",
+      "name": "Opea"
+    }
+  ]
 }
