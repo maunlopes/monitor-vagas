@@ -82,6 +82,29 @@ const sources = {
     }));
   },
 
+  // Página de carreiras no Jobfy (um endereço por empresa; API pública).
+  async jobfy({ slug, name }) {
+    const res = await fetch(`https://app.jobfy.pro/company_api/get_public_vacancies/${slug}`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "{}",
+      signal: AbortSignal.timeout(20_000),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return (data.card_list ?? []).map((j) => {
+      const modality = { home: "Remoto", mixed: "Híbrido", presential: "Presencial" }[j.work_modality] ?? "";
+      return {
+        id: `jobfy:${slug}:${j._id}`,
+        title: j.title,
+        company: name ?? j.company ?? slug,
+        location: [j.city, j.state, modality, j.contract_type].filter(Boolean).join(", "),
+        url: `https://app.jobfy.pro/${slug}/vaga?id=${j._id}`,
+        brasil: true,
+      };
+    });
+  },
+
   // Página de carreiras no InHire (um endereço por empresa; a API não informa a data de publicação).
   async inhire({ slug, name }) {
     const data = await getJson("https://api.inhire.app/job-posts/public/pages", { "X-Tenant": slug });

@@ -692,6 +692,12 @@
       "slug": "lwsa",
       "name": "LWSA (Locaweb)",
       "brasil": true
+    },
+    {
+      "ats": "jobfy",
+      "slug": "firstdecision",
+      "name": "First Decision",
+      "brasil": true
     }
   ],
   "solidesTermos": [
