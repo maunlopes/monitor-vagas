@@ -48,6 +48,7 @@
     "greenhouse:xpinc",
     "greenhouse:zupinnovation",
     "gupy:\"designer de produto\"",
+    "gupy:\"especialista de produtos\"",
     "gupy:\"product design\"",
     "gupy:\"product designer\"",
     "gupy:\"ui/ux\"",
@@ -152,6 +153,7 @@
     "lever:zippi",
     "mindsight:opea",
     "solides:\"designer de produto\"",
+    "solides:\"especialista de produtos\"",
     "solides:\"product designer\"",
     "solides:\"ux designer\"",
     "solides:\"ux researcher\""
@@ -185,5 +187,6 @@
   "gupy:12900348": "2026-11-16T20:21:44.512Z",
   "gupy:12899859": "2026-11-16T20:21:44.512Z",
   "gupy:12603715": "2026-11-16T21:00:56.543Z",
-  "gupy:12882445": "2026-11-16T21:30:48.845Z"
+  "gupy:12882445": "2026-11-16T21:30:48.845Z",
+  "solides:947977": "2026-11-17T12:20:56.670Z"
 }
