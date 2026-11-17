@@ -127,6 +127,79 @@ const sources = {
       });
   },
 
+  // Portal DigAí (jobs.digai.ai): monitora via sitemap + scrape de páginas individuais.
+  async digai() {
+    // 1. Busca o sitemap para pegar UUIDs e datas
+    const sitemapRes = await fetch("https://jobs.digai.ai/sitemap.xml", {
+      headers: { accept: "application/xml" },
+      signal: AbortSignal.timeout(30_000),
+    });
+    if (!sitemapRes.ok) throw new Error(`Sitemap HTTP ${sitemapRes.status}`);
+    const xml = await sitemapRes.text();
+
+    // 2. Extrai UUIDs e lastmod (só vagas — paths com UUID)
+    const entries = [];
+    const uuidRe = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
+    for (const m of xml.matchAll(/<url>\s*<loc>([^<]+)<\/loc>(?:\s*<lastmod>([^<]+)<\/lastmod>)?/g)) {
+      const url = m[1];
+      const lastmod = m[2];
+      const uuidMatch = url.match(uuidRe);
+      if (!uuidMatch) continue;
+      entries.push({ uuid: uuidMatch[0], url, lastmod });
+    }
+
+    // 3. Filtra: apenas últimos 3 dias (evita varrer milhares de vagas)
+    const cutoff = Date.now() - 3 * 24 * 60 * 60 * 1000;
+    const recent = entries.filter((e) => e.lastmod && new Date(e.lastmod).getTime() > cutoff);
+
+    // 4. Para cada vaga recente, busca a página e extrai título/empresa/local
+    const jobs = [];
+    for (const entry of recent.slice(0, 50)) { // Limite de 50 por execução
+      try {
+        const pageRes = await fetch(`https://jobs.digai.ai/${entry.uuid}`, {
+          headers: { accept: "text/html" },
+          signal: AbortSignal.timeout(10_000),
+        });
+        if (!pageRes.ok) continue;
+        const html = await pageRes.text();
+
+        // Título: og:title ou <title>
+        const ogTitle = html.match(/<meta\s+property="og:title"\s+content="([^"]+)"/)?.[1]
+          ?? html.match(/<title>([^<]+)<\/title>/)?.[1]
+          ?? "";
+        // Descrição og para extrair empresa/local
+        const ogDesc = html.match(/<meta\s+property="og:description"\s+content="([^"]+)"/)?.[1] ?? "";
+        // Empresa: procura no corpo da página
+        const companyMatch = html.match(/Verificada[^<]*<\/[^>]+>\s*([^<]+)/)?.[1]
+          ?? html.match(/<h2[^>]*>([^<]+)<\/h2>/)?.[1]
+          ?? ogDesc.split(/\s*[-–|]\s*/)?.[0]
+          ?? "DigAí";
+        // Local
+        const locMatch = html.match(/📍\s*([^<]+)/)?.[1]
+          ?? html.match(/Localização[^<]*<[^>]+>\s*([^<]+)/)?.[1]
+          ?? "";
+        // Modalidade
+        const modalMatch = html.match(/(Remoto|Híbrido|Presencial)/i)?.[1] ?? "";
+
+        const title = ogTitle.replace(/\s*[-–|]\s*DigA[Íí].*$/i, "").trim();
+        if (!title) continue;
+
+        jobs.push({
+          id: `digai:${entry.uuid}`,
+          title,
+          company: companyMatch.trim().replace(/\s+/g, " ").slice(0, 80),
+          location: [locMatch.trim(), modalMatch].filter(Boolean).join(" · "),
+          url: `https://jobs.digai.ai/${entry.uuid}`,
+          postedAt: entry.lastmod ? new Date(entry.lastmod).toISOString() : undefined,
+          brasil: true,
+        });
+      } catch {
+        // Ignora vagas que não conseguimos acessar
+      }
+    }
+    return jobs;
+  },
+
   // Busca por palavra-chave no portal público da Gupy (cobre todas as empresas que usam Gupy).
   async gupy({ term }) {
     const url = `https://portal.gupy.io/api/job-search/jobs?jobName=${encodeURIComponent(term)}&limit=50&offset=0&sortBy=publishedDate&sortOrder=desc`;
@@ -338,6 +411,7 @@ async function main() {
     ...cfg.gupyTermos.map((term) => ({ label: `gupy:"${term}"`, brasil: true, run: () => sources.gupy({ term }) })),
     ...(cfg.solidesTermos ?? []).map((term) => ({ label: `solides:"${term}"`, brasil: true, run: () => sources.solides({ term }) })),
     ...(cfg.arbivagas ? [{ label: "arbivagas", brasil: true, run: () => sources.arbivagas() }] : []),
+    ...(cfg.digai ? [{ label: "digai", brasil: true, run: () => sources.digai() }] : []),
     ...(cfg.mindsight ?? []).map((b) => ({ label: `mindsight:${b.slug}`, brasil: true, run: () => sources.mindsight(b) })),
   ];
 
