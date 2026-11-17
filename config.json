@@ -708,5 +708,13 @@
       "name": "Opea"
     }
   ],
-  "digai": true
+  "digaiTermos": [
+    "product designer",
+    "ux designer",
+    "ui/ux designer",
+    "ux researcher",
+    "designer de produto",
+    "design system",
+    "especialista de produtos"
+  ]
 }
