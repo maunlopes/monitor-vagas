@@ -16,7 +16,9 @@
     "design system",
     "product design",
     "especialista de produtos",
-    "product specialist"
+    "product specialist",
+    "design ops",
+    "designops"
   ],
   "excluir": [
     "estagi",
@@ -49,7 +51,9 @@
     "ux researcher",
     "designer de produto",
     "product design",
-    "especialista de produtos"
+    "especialista de produtos",
+    "design ops",
+    "designops"
   ],
   "empresas": [
     {
@@ -705,7 +709,9 @@
     "ux designer",
     "designer de produto",
     "ux researcher",
-    "especialista de produtos"
+    "especialista de produtos",
+    "design ops",
+    "designops"
   ],
   "arbivagas": true,
   "mindsight": [
@@ -721,6 +727,8 @@
     "ux researcher",
     "designer de produto",
     "design system",
-    "especialista de produtos"
+    "especialista de produtos",
+    "design ops",
+    "designops"
   ]
 }
