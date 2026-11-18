@@ -344,12 +344,21 @@ async function formatJob(job) {
 async function sendTelegram(text) {
   if (DRY_RUN) return console.log(`\n[DRY_RUN]\n${text}`);
   if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) throw new Error("Faltam TELEGRAM_BOT_TOKEN e TELEGRAM_CHAT_ID");
-  const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text, parse_mode: "HTML", disable_web_page_preview: true }),
-  });
-  if (!res.ok) throw new Error(`Telegram: HTTP ${res.status} ${await res.text()}`);
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text, parse_mode: "HTML", disable_web_page_preview: true }),
+    });
+    if (res.ok) return;
+    const body = await res.text();
+    if (attempt < 3 && res.status >= 500) {
+      console.warn(`Telegram ${res.status}, tentativa ${attempt}/3 — aguardando 5s...`);
+      await new Promise((r) => setTimeout(r, 5_000));
+      continue;
+    }
+    throw new Error(`Telegram: HTTP ${res.status} ${body}`);
+  }
 }
 
 // Envia uma lista de vagas em uma ou mais mensagens (limite do Telegram: 4096 caracteres).
