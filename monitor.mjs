@@ -250,7 +250,7 @@ function matches(job, cfg, boardIsBrazilian) {
   // Descarta vagas publicadas há mais de 90 dias.
   if (job.postedAt) {
     const age = Date.now() - new Date(job.postedAt).getTime();
-    if (age > 90 * 24 * 60 * 60 * 1000) return false;
+    if (age > 120 * 24 * 60 * 60 * 1000) return false;
   }
 
   const loc = norm(job.location);
@@ -445,7 +445,7 @@ async function main() {
   }
 
   // Limpa registros com mais de 90 dias para o arquivo não crescer sem limite.
-  const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
+  const cutoff = Date.now() - 120 * 24 * 60 * 60 * 1000;
   for (const [id, ts] of Object.entries(seen)) if (id !== "_fontes" && new Date(ts).getTime() < cutoff) delete seen[id];
   seen._fontes = [...known].sort();
 
